@@ -1,0 +1,10 @@
+\begin{tikzpicture}[font = \scshape]
+  \node (pain) {pain};
+  \node (treatment) [below = of pain] {treatment};
+  \node (aspirin) [below left = 1cm and -0.5cm of treatment] {aspirin};
+  \node (nausea) [below right = 1cm and -0.5cm of treatment] {nausea};
+
+  \draw [arrow] (pain) -- node [auto] {has treatment} (treatment);
+  \draw [arrow] (treatment) -- node [auto, left] {treated with} (aspirin);
+  \draw [arrow] (treatment) -- node [auto, right] {has side-effect} (nausea);
+\end{tikzpicture}

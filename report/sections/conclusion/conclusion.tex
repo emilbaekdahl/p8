@@ -1,0 +1,10 @@
+\section{Conclusion}\label{sec:conclusion}
+
+Representing \acp{kg} as low-dimensional vector embeddings has its computational advantages.
+Querying existing knowledge is fast since arithmetic operations on embedded entities and relations act as translation from head entity to tail entity and vice versa.
+The \ac{hake} technique, furthermore, has the advantages of being able to model hierarchical knowledge and complex relations.
+However, the technique is not very precise and without a successful replication experiment, we doubt that the technique is flexible and scalable enough to be implemented in real-world use cases.
+This argument is substantiated by the fact that performance on domain-specific data is significantly worse than on general-domain knowledge found in standard datasets.
+We conclude that embedding technique might not be a suitable method for the link prediction problem in \acp{kg}.
+Therefore, a deeper investigation into correct methods for the problem is necessary.
+Any future solution to this problem should consider not only the structure of the graph, but also the semantics of entities and their relations, for it to work effectively.

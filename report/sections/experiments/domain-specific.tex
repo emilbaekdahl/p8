@@ -1,0 +1,31 @@
+\subsection{Domain-Specific Data}\label{sec:domain-specific}
+
+The goal of this experiment is to find out how the \ac{hake} technique performs on domain-specific data which, compared to the data used in the replication experiment, is non-standard.
+We construct a \ac{kg} specific for the medical domain by extracting data from Wikidata using its SPARQL endpoint.\footnote{The code used for dataset construction can be found on Github: \url{https://github.com/emilbaekdahl/p8-code}. It is also attached to the hand-in of this project.}
+In the construction, we explicitly include a class-subclass-instance hierarchy.
+In Wikidata, the hierarchy is based on the relations \textsc{subclass of}\footnote{\url{https://www.wikidata.org/wiki/Property:P279}} and \textsc{instance of}\footnote{\url{https://www.wikidata.org/wiki/Property:P31}}.
+As an example, we consider the entity \textsc{medication}\footnote{\url{https://www.wikidata.org/wiki/Q12140}}, one of the most general entities in the \ac{kg}, that occurs in the triple $(\textsc{antipyretic}, \textsc{subclass of}, \textsc{medication})$ which in turn occurs in $(\textsc{aspirin}, \textsc{instance of}, \textsc{antipyretic})$.
+
+We believe that this way of constructing the \ac{kg} with a clear hierarchy makes it suitable for the \ac{hake} technique.
+However, it should be noted that\cite{Zhang2019} does not mention any requirements to the hierarchy; for instance, if it must be balanced or strict.
+This means that, in the domain-specific \ac{kg}, an entity can be related to entities at different levels of the hierarchy.
+An example of this seen in \figurename~\ref{fig:non-strict-hierarchy} where \textsc{aspirin} is both an instance of \textsc{antipyretic} and \textsc{medication} even though those entities occupy two different levels of the hierarchy.
+
+\begin{figure}[ht]
+  \centering\small
+  \input{sections/experiments/figures/non-strict-hierarchy.tex}
+  \caption{%
+    The \ac{hake} technique does not require a specific structure to the hierarchies in the \ac{kg}.
+    This means that we, for instance, find non-strict hierarchies in the domain-specific \ac{kg}, where an entity is related to multiple entities at different hierarchical levels.
+  }\label{fig:non-strict-hierarchy}
+\end{figure}
+
+The medical dataset has \num{20422} entities, \num{5} types of relations, and a total of \num{34216} facts.
+The results from the experiment with domain-specific data is shown in Table~\ref{tab:domain-specific} where the replication experiment results from Table~\ref{tab:replication} is included for comparison.
+We clearly see a significant decrease in performance on the domain-specific dataset.
+
+\begin{table}[ht]
+  \centering
+  \caption{Results for Domain-Specific Dataset Experiment}\label{tab:domain-specific}
+  \input{sections/experiments/tables/domain-specific.tex}
+\end{table}

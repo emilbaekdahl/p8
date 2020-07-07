@@ -1,0 +1,38 @@
+\begin{tikzpicture}[
+    -stealth,
+    semithick,
+    shorten < = 1pt,
+    shorten > = 1pt,
+    font = \scriptsize,
+    background default draw = black,
+    background draw = lightgray,
+    every node/.style = {
+        circle,
+        inner sep = 2pt,
+        background default draw = black,
+        background draw = lightgray,
+      }
+  ]
+  \node (a) at (0, 0) [draw = black] {};
+  \node (aa) [draw = none, inner sep = 0pt, above = 1pt of a, visible on = <2->] {$a$};
+  \node (b) at (1, 0.5) [draw = black] {};
+  \node (bb) [draw = none, inner sep = 0pt, above = 1pt of b, visible on = <2->] {$b$};
+  \node (c) at (1.2, -0.25) [draw on = <2-3>] {};
+  \node (cc) [draw = none, inner sep = 0pt, right = 1pt of c, visible on = <4->] {$c$};
+  \node (d) at (0.8, -0.66) [draw on = <2->] {};
+  \node (e) at (0.33, 0.75) [draw on = <2->] {};
+  \node (f) at (-0.5, 0.5) [draw on = <2->] {};
+  \node (g) at (2, 0.25) [draw on = <2->] {};
+  \node (h) at (1.8, -0.5) [draw on = <2->] {};
+  \node (i) at (1.5, 0.75) [draw on = <2->] {};
+
+  \draw [draw on = <2->] (c) -- (e);
+  \draw [draw on = <2->] (e) -- (f);
+  \draw [draw on = <2->] (b) -- (d);
+  \draw [draw on = <2->] (d) -- (h);
+  \draw [draw on = <2->] (h) -- (i);
+  \draw [draw on = <2->] (i) -- (g);
+  \draw [draw on = <2->] (g) -- (a);
+  \draw [draw = black] (a) -- node [draw = none, auto, visible on = <3->] {$r$} (b);
+  \draw [draw on = <2-3>] (b) -- node [draw = none, auto, visible on = <4->] {$r$} (c);
+\end{tikzpicture}

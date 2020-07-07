@@ -1,0 +1,79 @@
+\subsection{Knowledge Bases}\label{sec:knowledge-bases}
+
+A \acf{kb} is a collection of facts that explain how different concepts in a certain domain are related.
+Throughout this project, we will use the medical domain for exemplification, however, \acp{kb} can also span multiple domains.
+The constituents of a \ac{kb} are divided into two categories: entities and relations.
+An entity can be a concrete object or an abstract concept.
+In our case study, an example of an entity is a concrete drug such as aspirin, but it can also something more abstract such as the class of infectious diseases.
+A relation describes a connection between two entities.
+For instance, a relation can describe a medical treatment by linking a drug and a disease.
+Together, entities and relations form facts.
+Formally, we define a \ac{kb} in the following way.
+
+\begin{definition}[\Acl{kb}]\label{def:kb}
+  Given a set of entities $\mathcal{E}$ and a set of relations $\mathcal{R}$, a \acf{kb} is a set of triples $\mathcal{K} = \{(h, r, t) \mid h, t \in \mathcal{E} \wedge r \in \mathcal{R} \}$ where each triple is a fact describing a relation $r$ between a head entity $h$ and a tail entity $t$.
+\end{definition}
+
+\begin{example}[A simple \acl{kb}]\label{ex:kb}
+  Suppose we want to represent the fact that pain can be treated with aspirin.
+  For this we need two entities, \textsc{pain} and \textsc{aspirin}, and one relation, \textsc{treated with}.
+  Together, these make up one fact in the \ac{kb} $\mathcal{K}$ which, based on Definition~\ref{def:kb}, can be formulated in the following way.
+  \begin{align*}
+    \mathcal{E} & = \{\textsc{pain}, \textsc{aspirin}\}                          \\
+    \mathcal{R} & = \{\textsc{treated with}\}                                    \\
+    \mathcal{K} & = \{(\textsc{pain}, \textsc{treated with}, \textsc{aspirin})\}
+  \end{align*}
+\end{example}
+
+In order to defined the link prediction problem introduced in Section~\ref{sec:introduction}, we first define a more general problem.
+Inference in \acp{kb} is concerned with the completeness aspect of \ac{kb} refinement and is defined in the following way.
+
+\begin{definition}[\Acl{kb} inference]\label{def:kb-inference}
+  Let $\mathcal{K}^*$ be a \ac{kb} of all true knowledge and $\mathcal{K}$ be a \ac{kb} of observed knowledge such that $\mathcal{K} \subset \mathcal{K}^*$.
+  The problem of \ac{kb} inference is to compute the missing knowledge $\mathcal{K}'$ in $\mathcal{K}$ such that $\mathcal{K} \cup \mathcal{K}' = \mathcal{K}^*$.
+\end{definition}
+
+The term \enquote{missing knowledge} in Definition~\ref{def:kb-inference} can be refer to both relations and entities.
+In the context of the medical domain, finding a missing relation between a disease and a drug can hint at a new treatment, while discovering missing entities can lead to new drug proposals.
+
+To represent a \ac{kb}, we can use an edge-labelled directed graph where nodes represent entities and edges represent relations.
+This graph-based representation is defined in the following.
+
+\begin{definition}[\Acl{kg}]
+  A \acf{kg} is a 3-tuple $(V, E, \phi)$ where $V$ is the set of entities, $E \subseteq V \times V$ is the set of relations, and the function $\phi \colon E \rightarrow \mathcal{T}$ assigns a relation $\mathcal{T}_i \in \mathcal{T}$ to each $e \in E$.
+\end{definition}
+
+The direction of a relation in a \ac{kg} is implied by the direction of its corresponding edge.
+For instance, the arrow in \figurename~\ref{fig:one-fact-kb-graph}, which represents the \ac{kb} from Example~\ref{ex:kb}, indicates that pain is treated with aspirin and not the other way around.
+
+\begin{figure}[ht]
+  \centering\small
+  \begin{tikzpicture}
+    \node (pain) {\scshape pain};
+    \node (aspirin) [below = of pain] {\scshape aspirin};
+    \draw [arrow] (pain) -- node[right] {\scshape treated with} (aspirin);
+  \end{tikzpicture}
+  \caption{The \ac{kb} $\mathcal{K} = \{(\textsc{pain}, \textsc{treated with}, \textsc{aspirin})\}$ represented as a \acl{kg}.}%
+  \label{fig:one-fact-kb-graph}
+\end{figure}
+
+Any \ac{kb} $\mathcal{K}$ over entities $\mathcal{E}$ and relations $\mathcal{R}$ can be represented as a \ac{kg} by letting $V = \mathcal{E}$ and $E = \{(h, t) \mid (h, r, t) \in \mathcal{K}\}$.
+The edge labelling function is defined such that $\phi(h, t) = r$ for each $(h, r, t) \in \mathcal{K}$.
+
+Over recent years, \acp{kg} have become synonymous with \acp{kb} and is likely a more frequently used term.
+Throughout this project, we use the term \ac{kg} as an interchange for \ac{kb}.
+For example, we can talk about triples $(h, r, t)$, as defined in Definition~\ref{def:kb}, in the context of a graph.
+
+Now that we have a concrete representation of knowledge in the form of a \ac{kg}, we can put the inference problem from Definition~\ref{def:kb-inference} into context and formulate the precise problem that we address in this project.
+
+\begin{description}
+  \item [\emph{Problem formulation}]
+        Let $\mathcal{K} = (V, E, \phi)$ be a \ac{kg} where $E$ is the observed relations, or links, between the entities $V$.
+        Let $E^*$ denote the set of all possible true links.
+        Then the set $E' = E^* \setminus E$ represents the missing links in $\mathcal{K}$.
+        The task of link prediction is to predict whether a given link $e \in V \times V$ such that $e \not\in E$ is true, i.e.\ if $e \in E^*$\cite{Li2018,Lue2011}.
+\end{description}
+
+The link prediction problem concerns the completeness aspect of \ac{kb} refinement, introduced in Section~\ref{sec:introduction}, with focus on identifying missing relations.
+A solution to the problem typically consists of assigning a probability of existence to a potential edge in $V \times V$.
+In the following section, we will dive deeper into graph embedding which is the foundation for many recent link prediction techniques.

@@ -1,0 +1,27 @@
+\subsection{Replication}\label{sec:replication}
+
+This experiment is carried out by running the exact experiments presented in\cite{Zhang2019}.
+Here, the \ac{hake} technique is evaluated on the three standard datasets WN18RR, FB15k-237, and YAGO3\--10 that are based on the \acp{kg} WordNet, Freebase, and \ac{yago} respectively.
+In the original experiments, the authors perform hyperparameter optimisation to find the best parameter configurations for each dataset.
+We use the same parameter configurations in the replication experiments.
+
+The results of the replication experiments are shown in Table~\ref{tab:replication}.
+The bottom row indicates how many percent the replicated results deviate from the original results.
+This deviation is calculated by
+\[\frac{\text{replication} - \text{original}}{\text{replication}} \cdot \SI{100}{\percent}.\]
+
+\begin{table*}[ht]
+  \centering
+  \caption{Results for Replication Experiment}\label{tab:replication}
+  \input{sections/experiments/tables/replication.tex}
+\end{table*}
+
+By looking at the deviation, it is clear that the different datasets give rise to different results.
+On the WordNet dataset, the replication experiment ranges from performing \SI{-1.77}{\percent} worse to \SI{0.172}{\percent} better.
+We do not consider this a significant deviation and it could just be due to differences in the initialisation of the entity and relation embeddings.
+However, replication results on the Freebase and \ac{yago} datasets are much different from the original results.
+Worth noticing is that the replication results are consistently worse than the original.
+This indicates that the difference in performance is not only due to differences in the initial embeddings as suggested for the WordNet dataset.
+It should be noted, however, that due to limitations on computational power, we have not been able to run the experiments more than a few times per dataset.
+This is in contrast to the results in\cite{Zhang2019} which are averages of multiple runs.
+Nonetheless, we think that a \SIrange{-3.58}{-11.7}{\percent} deviation is significant.

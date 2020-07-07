@@ -1,0 +1,9 @@
+\begin{tikzpicture}[font = \scshape]
+  \node (med) {medication};
+  \node (anti) [below left = 1cm and 0.125cm of med, anchor = east] {antipyretic};
+  \node (asp) [below = 2cm of med] {aspirin};
+
+  \draw [arrow] (anti) -- node [auto] {subclass of} (med);
+  \draw [arrow] (asp) -- node [auto] {instance of} (anti);
+  \draw [arrow] (asp) -- node [auto, right] {instance of} (med);
+\end{tikzpicture}

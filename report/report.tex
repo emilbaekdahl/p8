@@ -1,0 +1,65 @@
+\documentclass[compsoc, a4paper]{IEEEtran}
+
+% Include packages
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[inline]{enumitem}
+\usepackage{acro, csquotes, amsmath, microtype, tikz, pgfplots, hyperref, inconsolata, bm, amssymb, siunitx, algpseudocode, fixme, mathtools, booktabs, siunitx, algorithmicx, algpseudocode, enumitem}
+\usepackage[caption = false, labelfont = sf, textfont = sf]{subfig}
+\usepackage[nocompress]{cite}
+
+% Package setups
+\setenumerate{label = (\alph*)}
+\usetikzlibrary{positioning, arrows.meta}
+\tikzset{
+  every label/.style = { fill = white, inner sep = 1pt },
+  every node/.style = { label distance = 2pt },
+  arrow/.style = { ->, > = stealth, semithick, shorten > = 2pt, shorten < = 2pt }
+}
+\fxsetup{draft, layout = margin, author =, marginface = \scriptsize, inlineface = \scriptsize}
+\hypersetup{hidelinks}
+\pgfplotsset{compat=1.16}
+\sisetup{detect-all}
+\acsetup{short-format = \uppercase}
+
+% Acronyms
+\DeclareAcronym{kb}{short = kb, long = knowledge base}
+\DeclareAcronym{yago}{short = yago, long = yet another great ontology}
+\DeclareAcronym{kg}{short = kg, long = knowledge graph}
+\DeclareAcronym{hake}{short = hake, long = hierarchy-aware knowledge graph embedding}
+\DeclareAcronym{mrr}{short = mrr, long = mean reciprocal rank}
+\DeclareAcronym{han}{short = h@n, long = hits-at-$n$}
+
+% Custom "theorom" environments
+\newtheorem{definition}{Definition}
+\newtheorem{example}{Example}
+
+\title{Link Prediction in Knowledge Graphs Using Graph Embedding}
+\author{Emil S. Bækdahl \\ \url{ebakda16@student.aau.dk} \\ Group d806f20}
+
+\begin{document}
+
+\maketitle
+\begin{abstract}
+  \Aclp{kb} are becoming increasingly popular in both academia and industry since they provide an intuitive way to reason about data and thus can support decision making.
+  Recently, an interest in inferring new knowledge from existing \aclp{kb} has seen a rise.
+  For instance, in the medical domain, inference can be used to propose new drugs or treatments for known diseases.
+  In this project, we examine a state-of-the-art approach to this problem that uses graph embeddings to predict missing links in \aclp{kb}.
+  Particularly, we focus on a recent approach called the \acl{hake} and evaluate its performance on existing and new datasets.
+  As a conclusion, we are not able to reproduce the results of the associated paper, and experiments on a new domain-specific dataset exhibit significantly poor performance.
+\end{abstract}
+
+\acresetall%
+
+\input{sections/introduction.tex}
+\input{sections/related-work/related-work.tex}
+\input{sections/preliminaries/preliminaries.tex}
+\input{sections/method/method.tex}
+\input{sections/experiments/experiments.tex}
+\input{sections/discussion/discussion.tex}
+\input{sections/conclusion/conclusion.tex}
+
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv, bibliography.bib}
+
+\end{document}

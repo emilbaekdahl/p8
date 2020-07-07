@@ -1,0 +1,92 @@
+\subsection{Learning the Embedding}\label{sec:learning}
+
+For the learning process, we must first define the score function.
+In the \ac{hake} technique, the distance function (\ref{eq:distance-function}) is at the core of the score function.
+However, to satisfy the property that the score function must assign high scores to correct embeddings and lower scores to wrong embeddings, we invert the sign as seen in (\ref{eq:score-function}).
+In this way, a perfect embedding will get the highest score $0$.
+\begin{equation}\label{eq:score-function}
+  f(\bm{h}, \bm{r}, \bm{t}) = - \text{d}(\bm{h}, \bm{r}, \bm{t})
+\end{equation}
+
+Furthermore, the weights $\lambda$ and $\mu$ are added to each term in the distance function.
+These weights are treated as hyperparameters and will be learned by the model together with the entity and relation embeddings.
+\begin{equation}
+  \text{d}(\bm{h}, \bm{r}, \bm{t}) = \lambda\text{d}_\rho(\bm{h}, \bm{r}, \bm{t}) + \mu\text{d}_\phi(\bm{h}, \bm{r}, \bm{t})
+\end{equation}
+
+The \ac{hake} method uses negative sampling\cite{Mikolov2013} when learning the embedding.
+The purpose of this sampling technique is to cope with the softmax function typically used when learning classification problems.
+The softmax function maps a real-valued vector to a vector of numbers between 0 and 1 that can be treated as a probability distribution.
+Given a \ac{kg} $\mathcal{K}$ and a score function $f$, we can compute the softmax value for a triple $(h, r, t) \in \mathcal{K}$ as
+
+\[\frac{e^{f(\bm{h}, \bm{r}, \bm{t})}}{\sum_{(h', r', t') \in \mathcal{K}} e^{f({\bm{h'}, \bm{r'}, \bm{t'}})}}.\]
+
+The problem here is the summation in the denominator which becomes increasingly expensive to compute as the \ac{kg} grows.
+According to\cite{Paulheim2016}, many freely available \acp{kg} contain billions of facts making softmax computation infeasible.
+
+Negative sampling provides a way around this by generating a number of negative triples $(h', r, t') \not\in \mathcal{K}$ for every positive triple $(h, r, t) \in \mathcal{K}$.
+Based on a positive triple $(h, r, t)$, a negative triple is either on the form $(h', r, t)$ or $(h, r, t')$ where $h'$ and $t'$ are sampled from the entities in the \ac{kg}.
+For convenience, we describe negative triples given a positive triple $(h, r, t)$ as the set
+\begin{equation}\label{eq:negative-samples}
+  \begin{split}
+    \mathcal{N}_{(h, r, t)} = {} & \{(h, r, t') \mid t' \in \mathcal{E} \wedge (h, r, t') \not\in \mathcal{K}\} \\
+    & \cup \{(h', r, t) \mid h' \in \mathcal{E} \wedge (h', r, t) \not\in \mathcal{K}\}.
+  \end{split}
+\end{equation}
+Furthermore, we use the notation $\mathcal{N}_{{(h, r, t)}_n}$ for the set of $n$ uniformly sampled negative triples.
+
+As in many other machine learning problems, we wish to minimise a certain loss function in the learning process.
+We use the distance function (\ref{eq:distance-function}) and negative sampling to define the loss function as
+\begin{equation}\label{eq:loss-function}
+  \begin{split}
+    & - \log\sigma(\gamma - \text{d}(\bm{h}, \bm{r}, \bm{t})) \\
+    &- \sum_{\mathclap{(h', r, t') \in \mathcal{N}_{{(h, r, t)}_n}}} P(h', r, t')\log\sigma(\text{d}(\bm{h'}, \bm{r}, \bm{t'}) - \gamma),
+  \end{split}
+\end{equation}
+where $\gamma$ is a positive margin parameter and $\sigma$ is the sigmoid function,
+\[\sigma(x) = \frac{1}{1 + e^{-x}}.\]
+
+To get an intuition of (\ref{eq:loss-function}), we notice two things.
+First, from (\ref{eq:distance-function}) we know that the value of the distance function cannot be negative.
+Second, we note that the value of $\log\sigma(\cdot)$ grows as its parameter increases.
+Therefore, the first term gets the lowest value when $\text{d}(\bm{h}, \bm{r}, \bm{t}) = 0$.
+In the second term, the order of $\gamma$ and $\text{d}(\bm{h}, \bm{r}, \bm{t})$ is flipped.
+This means that the value for the second term gets lower as the distances of the negative triples get higher.
+Immediately, this satisfies the objectives of the \ac{hake} discussed in the previous section.
+Moreover, each negative triple in (\ref{eq:loss-function}) is multiplied by a weight $P$ defined as
+\[P(h', r, t') = \frac{e^{\alpha f(\bm{h'}, \bm{r}, \bm{t'})}}{\sum_{(h'', r, t'') \in \mathcal{N}_{{(h, r, t)}_n}} e^{\alpha f(\bm{h''}, \bm{r}, \bm{t''})}},\]
+where $\alpha$ is the sampling temperature.
+
+Contrary to what we described earlier, this weight is actually a softmax distribution.
+In this case, the computation is not problematic since it is dependent on a fixed size of samples, namely the negative sample size $n$, and not the size of the entire dataset $|\mathcal{K}|$.
+
+Now, with all necessary concepts defined, we formulate the learning process which is illustrated in \figurename~\ref{alg:learning}.
+First, we initialise the entity and relation embeddings on Line~\ref{alg:learning:ent} and~\ref{alg:learning:rel}.
+This is done by creating an embedding vector $\bm{e} \in \mathbb{R}^{d2}$ for each $e \in \mathcal{E}$ and setting its entries $\bm{e}_i$ to values drawn from the uniform distribution $\mathcal{U}$.
+The relation embeddings go through the same procedure.
+The main learning loop is based on mini-batch gradient decent using the Adam optimiser\cite{Kingma2014}.
+In each iteration, we sample a batch of $b$ true triples $\mathcal{B}^+$ from the training dataset $\mathcal{K}$ on Line~\ref{alg:learning:pos-batch}.
+For each true triple, we sample $n$ negative triples in the batch $\mathcal{B}^-$ on Line~\ref{alg:learning:neg-batch}.
+Together, these form the training batch $\mathcal{B}$ composed of pairs of a true triple and a set of negative triples as seen on Line~\ref{alg:learning:batch}.
+Based on $\mathcal{B}$, we compute the sum of losses using (\ref{eq:loss-function}) and update the parameters of the model by taking a gradient step on Line~\ref{alg:learning:loss}.
+The parameters that get updated are the entity embedding, the relation embedding, the radial weight $\lambda$, and the angular weight $\mu$.
+
+\begin{figure*}
+  \caption{Pseudo code for the training procedure of the \ac{hake} technique inspired by\cite{Bordes2013}.}\label{alg:learning}
+  \begin{algorithmic}[1]
+    \Require Training dataset $\mathcal{K} = \{(h, r, t) \mid h, t \in \mathcal{E} \wedge r \in \mathcal{R}\}$, dimensionality of embedding space $d$, margin $\gamma$, batch size $b$, and negative sample size $n$.
+    \Statex
+    \State $\bm{e}_i \gets \mathcal{U}(-\frac{\gamma}{d}, \frac{\gamma}{d})$ for each $e \in \mathcal{E}$, where $\bm{e} \in \mathbb{R}^{2d}$ \label{alg:learning:ent}
+    \State $\bm{r}_i \gets \mathcal{U}(-\frac{\gamma}{d}, \frac{\gamma}{d})$ for each $r \in \mathcal{R}$, where $\bm{r} \in \mathbb{R}^{2d}$ \label{alg:learning:rel}
+    \Loop
+    \State $\mathcal{B} \gets \emptyset$
+    \State $\mathcal{B}^+ \gets \text{sample}(\mathcal{K}, b)$ \label{alg:learning:pos-batch}
+    \For{$(h, r, t) \in \mathcal{B}^+$}
+    \State $\mathcal{B}^- \gets \text{sample}(\mathcal{N}_{(h, r, t)}, n)$ \label{alg:learning:neg-batch}
+    \State $\mathcal{B} \gets \mathcal{B} \cup \{\big((h, r, t), \mathcal{B}^-\big)\}$ \label{alg:learning:batch}
+    \EndFor
+    \State Update parameters w.r.t $\displaystyle\sum_{\mathclap{((h, r, t), \mathcal{B}^-) \in \mathcal{B}}} \nabla \big(- \log\sigma(\gamma - \text{d}(\bm{h}, \bm{r}, \bm{t})) - \sum_{\mathclap{(h', r, t') \in \mathcal{B}^-}} P(h', r, t') \log\sigma(\text{d}(\bm{h'}, \bm{r}, \bm{t'}) - \gamma)\big)$ \label{alg:learning:loss}
+
+    \EndLoop
+  \end{algorithmic}
+\end{figure*}

@@ -1,0 +1,86 @@
+\subsection{Representing Hierarchies in Embeddings}\label{sec:representing-hieraricies}
+
+As stated earlier, the \ac{hake} technique embeds entities and relations into a polar coordinate system.
+In such coordinate system, a point is described by its distance from the origin as well as its angle relative to a reference direction.
+These constituents are referred to as the radial coordinate, denoted $\rho$, and angular coordinate, denoted $\phi$, respectively.
+Given an embedded entity $\bm{e} = (\bm{e}_\rho, \bm{e}_\phi)$, we use $\bm{e}_\rho$ to denote the radial part and $\bm{e}_\phi$ to denote the angular part of the corresponding entity.
+This is illustrated in \figurename~\ref{fig:polar} where the entity $\bm{e}$ has radial coordinate $2$ and angular coordinate $0.8$.
+As in TransE, embeddings usually live in a high dimensional space.
+For the sake of illustrative examples, however, we use the $\mathbb{R}^2$ space.
+
+\begin{figure}[ht]
+  \centering\small
+  \input{sections/method/figures/polar.tex}
+  \caption{The embedded entity $\bm{e} = (2, 0.8)$ in the polar coordinate system.}\label{fig:polar}
+\end{figure}
+
+The motivation behind this two-fold embedding is, as mentioned earlier, that each component models a distinct aspect of the entity.
+\figurename~\ref{fig:hierarchy} illustrates entities from a medical domain.
+Here, \textsc{drug} is the most general entity and thus lies at the top of the hierarchy.
+One step down the hierarchy and we get a certain class of drugs, \textsc{antipyretics}.
+The entities \textsc{aspirin} and \textsc{ibuprofen} are instances of \textsc{antipyretics} and thus represent another step down the hierarchy.
+Entities on the same level of the hierarchy have the same radial coordinate and different angular coordinates.
+
+\begin{figure}[ht]
+  \centering\small
+  \input{sections/method/figures/hierarchy.tex}
+  \caption{The goal of the representation in the \ac{hake} technique is that entities of the same hierarchical level, such as \textsc{aspirin} and \textsc{ibuprofen}, have similar radial coordinates but different angular coordinates.}\label{fig:hierarchy}
+\end{figure}
+
+Since the \ac{hake} technique relies on a translational model like TransE and RotatE, it aims to achieve a similar goal.
+For each triple $(h, r, t)$, the embedded relation $\bm{r}$ acts as a translation from $\bm{h}$ to $\bm{t}$.
+Since each entity consists of two parts, radial and angular, the objective of this translation is two-fold.
+For the radial coordinate, the translation is a scaling operation, i.e.\ for each triple $(h, r, t)$, we want to satisfy
+\begin{equation}\label{eq:radial-translation}
+  \bm{h}_\rho \circ \bm{r}_\rho = \bm{t}_\rho.
+\end{equation}
+Once again, the $\circ$ operator is the element-wise product, i.e.\ ${\bm{h}_\rho}_i{\bm{r}_\rho}_i = {\bm{t}_\rho}_i$.
+This is what allows the translation to move from one level of the semantic hierarchy, namely $\bm{h}_\rho$, to another level $\bm{t}_\rho$.
+
+For the angular coordinate, the translation is a rotation that, for each triple $(h, r, t)$, should satisfy
+\begin{equation}\label{eq:angular-translation}
+  \bm{h}_\phi + \bm{r}_\phi \bmod{2\pi} = \bm{t}_\phi.
+\end{equation}
+The angular translation of an entity $\bm{e} = (\bm{e}_\rho, \bm{e}_\phi)$ can be seen as moving along the circumference of a circle with radius $\bm{e}_\rho$ starting at angle $\bm{e}_\phi$ \si{\radian}.
+This translation has a periodic nature in the interval $[0;2\pi]$ which is the reason for the modulo operator in (\ref{eq:angular-translation}).
+
+\begin{example}[Relations as translations]\label{ex:translation}
+  To illustrate how a relation acts as a translation from one entity to another, we consider \figurename~\ref{fig:translation} that shows an embedding of the triple $(h, r, t)$.
+  Here, we assume $\bm{h} = (1, 0.3)$, $\bm{t} = (3, 0.8)$, and $\bm{r} = (3, 0.5)$.
+  This embedding satisfies (\ref{eq:radial-translation}) and (\ref{eq:angular-translation}) since $1 \cdot 3 = 3$ and $0.3 + 0.5 \bmod 2\pi = 0.8$ respectively.
+
+  \begin{figure}[ht]
+    \centering\small
+    \input{sections/method/figures/translation.tex}
+    \caption{When the triple $(h, r, t)$ is embedded, the relation $\bm{r} = (3, 0.5)$ acts as a translation from $\bm{h} = (1, 0.3)$ to $\bm{t} = (3, 0.8)$.}\label{fig:translation}
+  \end{figure}
+\end{example}
+
+When learning the embedding, we must define a measure of similarity or dissimilarity between our current embedding of a triple $(h, r, t)$, and a true perfect embedding.
+We do this through a distance function which intuitively describes how good an embedding is at satisfying (\ref{eq:radial-translation}) and (\ref{eq:angular-translation}).
+For the radial and angular component, we define separate distance functions.
+For the radial component, we have the distance function
+\begin{equation}\label{eq:distance-function-radial}
+  \text{d}_\rho(\bm{h}, \bm{r}, \bm{t}) = \Vert \bm{h}_\rho \circ \bm{r}_\rho - \bm{t}_\rho \Vert_2
+\end{equation}
+and for the angular component, the distance function is defined as
+\begin{equation}\label{eq:distance-function-angular}
+  \text{d}_\phi(\bm{h}, \bm{r}, \bm{t}) = \left\Vert \sin \frac{\bm{h}_\phi + \bm{r}_\phi - \bm{t}_\phi}{2} \right\Vert_1.
+\end{equation}
+We define the final distance function as the sum of (\ref{eq:distance-function-radial}) and (\ref{eq:distance-function-angular}) as seen in (\ref{eq:distance-function}).
+\begin{equation}\label{eq:distance-function}
+  \text{d}(\bm{h}, \bm{r}, \bm{t}) = \text{d}_\rho(\bm{h}, \bm{r}, \bm{t}) + \text{d}_\phi(\bm{h}, \bm{r}, \bm{t})
+\end{equation}
+It is clear that if the embedding is perfect, we will have $\text{d}(\bm{h}, \bm{r}, \bm{t}) = 0$ for every triple $(h, r, t)$.
+Similarly, the more off the embedding is, the larger the distance value.
+
+\begin{example}[Distance functions]
+  We reconsider \figurename~\ref{fig:translation} from Example~\ref{ex:translation}.
+  Applying (\ref{eq:distance-function}) to the valid triple $(h, r, t)$ gives us a distance of
+  \[\sqrt{{(1 \cdot 3 - 3)}^2} + \sin \frac{0.3 + 0.5 - 0.8}{2} = 0\]
+  as expected.
+  Now, assume we introduce a new triple $(h, r', t)$ to the \ac{kg}.
+  Initially, we have $\bm{r'} = (2, 1.3)$ and by applying the distance function (\ref{eq:distance-function}) we get
+  \[\sqrt{{(1 \cdot 2 - 3)}^2} + \sin \frac{0.3 + 1.3 - 0.8}{2} = 1.389.\]
+  This will get penalised in the learning process and the embedding of $r'$ will be adjusted.
+\end{example}

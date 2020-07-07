@@ -1,0 +1,14 @@
+\begin{tikzpicture}[-stealth, shorten < = 1pt, shorten > = 1pt, draw = black, semithick, font = \scriptsize]
+  \node (a) at (2.75, 0.5) [inner sep = 0pt] {};
+  \node (b) at (2.0, 1.5) [inner sep = 0pt] {};
+  \node (c) at (1.25, 2.5) [inner sep = 0pt] {};
+  \node (d) at (3, 1.25) [inner sep = 0pt] {};
+
+  \draw [stealth-stealth] (0, 3) -- (0, 0) -- (3, 0);
+
+  \draw [shorten < = 0pt] (0, 0) -- node [near end, below] {$a$} (a);
+  \draw [draw = lightgray, shorten < = 0pt] (0, 0) -- node [near end, above] {$b$} (b);
+  \draw [draw = lightgray, shorten < = 0pt] (0, 0) -- node [near end, left] {$c$} (c);
+  \draw [shorten < = 0pt] (0, 0) -- node [near end, above] {$d$} (d);
+  \draw [visible on = <2->] (d) -- node [midway, right] {$r$ ($d + r$)} ++(-0.75, 1);
+\end{tikzpicture} 

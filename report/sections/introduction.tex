@@ -1,0 +1,34 @@
+\section{Introduction}\label{sec:introduction}
+
+Representation of knowledge in a way that suits computation is at the core of many machine intelligence tasks and agents.
+A collection of such knowledge is called a \ac{kb} and it describes how different entities in a domain are related.
+A \ac{kb} can be constructed either manually or automatically by computer programs that extract knowledge from existing sources.
+Either way, during the construction, there might be a trade-off between completeness and correctness\cite{Paulheim2016}.
+Completeness describes how well a \ac{kb} captures all knowledge in the desired domain while correctness describes the degree of truth of the knowledge.
+When creating a \ac{kb} by hand, it is possible to manually verify the correctness of the knowledge.
+However, it can be an infeasible task to manually cover all knowledge in larger domains, resulting in an incomplete \ac{kb}.
+To speed up this process, automatic methods, such as building computer programs that extract knowledge, can be used.
+However, while automatically extracting knowledge from many different sources can give a complete \ac{kb}, it may result in creating false knowledge.
+The trade-off lies in finding a reasonable balance between correct and complete knowledge.
+
+As a consequence of this issue, it is attractive to develop solutions that improve correctness or completeness of \acp{kb}.
+This task is called \ac{kb} refinement and approaches to it are either concerned with
+\begin{enumerate*}
+  \item increasing completeness by inferring new or hidden knowledge from existing knowledge, or
+  \item increasing correctness by finding and removing false knowledge.
+\end{enumerate*}
+Especially the former sees a gain in popularity since it can provide otherwise undiscovered insight into existing data and thus help humans in decision making.
+
+One approach to computationally increasing completeness is through link prediction.
+The goal of this task is to infer new knowledge by identifying missing links between existing entities in a \ac{kb}.
+For link prediction, the current most popular methods are based on vector embeddings of \acp{kb}.
+In this project, we take a closer look at this state-of-the-art technique.
+Specifically, we focus on a recent technique that uses a \ac{hake} of \acp{kb} to infer missing links between entities in a hierarchical graph structure\cite{Zhang2019}.
+We explain the underlying concepts for this technique and conduct experiments with existing datasets and a new domain-specific dataset.
+
+The rest of this report is structured as follows.
+Section~\ref{sec:related-work} discusses existing work on \acp{kb} and techniques for graph embedding and link prediction.
+In Section~\ref{sec:preliminaries}, we introduce preliminary concepts in the field which will be the foundation for understanding the \ac{hake} technique in Section~\ref{sec:method}.
+Using the technique, we conduct experiments and present their results in Section~\ref{sec:experiments}.
+In Section~\ref{sec:discussion}, we discus the results and highlight some key ideas that can point in directions of future work.
+We end with a conclusion in Section~\ref{sec:conclusion}.

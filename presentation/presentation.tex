@@ -1,0 +1,176 @@
+\documentclass[10pt, aspectratio = 1610, hide notes]{beamer}
+
+\usetheme{AAUsimple}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{helvet, pgfplots, pdfpages, bookmark}
+
+\usetikzlibrary{fit, positioning, arrows.meta, overlay-beamer-styles}
+\pgfplotsset{compat = 1.16}
+
+\newcommand{\chref}[2]{\href{#1}{{\usebeamercolor[bg]{AAUsimple}#2}}}
+
+\title{Link Prediction in Knowledge Graphs Using Graph Embedding}
+
+\date{\today}
+
+\author{Emil Bækdahl}
+
+\institute{
+  Department of Computer Science \\
+  Aalborg University
+}
+
+\pgfdeclareimage[height=1.5cm]{titlepagelogo}{AAUgraphics/aau_logo_new} 
+\titlegraphic{\pgfuseimage{titlepagelogo}}
+
+\begin{document}
+{\aauwavesbg%
+\begin{frame}[plain, noframenumbering]
+  \titlepage%
+\end{frame}}
+
+\begin{frame}{Quick Note}
+\end{frame}
+
+\begin{frame}{Agenda}
+  \tableofcontents
+\end{frame}
+
+\section{Link Prediction}
+\subsection{The Problem Setting}
+\begin{frame}{Link Prediction}{The Problem Setting}
+  \begin{columns}
+    \begin{column}{0.5 \textwidth}
+      \begin{itemize}[<+->]
+        \item True knowledge 
+          \[\mathcal{G} = (V, E).\]
+        \item Observed knowledge
+          \[\mathcal{G'} = (V, E') \ \text{where} \ E' \subset E.\]
+        \item Given $(u, v) \in V \times V$, is it true that
+          \[(u, v) \in E.\]
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5 \textwidth}
+      \centering
+      \input{figures/full-graph.tex}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Link Prediction as an Embedding Problem}
+\begin{frame}{Link Prediction as an Embedding Problem}
+  \begin{itemize}
+    \item An \emph{embedding} is a representation of one mathematical structure in the terms of another, e.g.\ \emph{graphs} represented as \emph{vectors}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Link Prediction as an Embedding Problem}{Learning Embeddings}
+  \begin{columns}
+    \begin{column}{0.5 \textwidth}
+      \centering
+      \input{figures/embedding-graph.tex}
+    \end{column}
+    \begin{column}{0.5 \textwidth}
+      \centering
+      \input{figures/embedding-coordinate-system.tex}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Link Prediction as an Embedding Problem}{Inferring with Embeddings}
+  \begin{columns}
+    \begin{column}{0.6 \textwidth}
+      \begin{itemize}[<+->]
+        \item Are $d$ and $a$ related with $r$? \onslide<3->{Probably not!}
+        \item We use the distance 
+          \[(d + r) - a\]
+          as plausibility measure.
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.4 \textwidth}
+      \centering
+      \input{figures/link-prediction.tex}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\subsection{Embedding Hierarchies}
+\begin{frame}{Link Prediction as an Embedding Problem}{Embedding Semantic Hierarchies}
+  \begin{itemize}
+    \item<+-> Hierarchy-Aware Knowledge Graph Embedding (HAKE)
+    \item<+-> Knowledge naturally exhibits hierarchies.
+    \item<+-> Polar coordinates help encode entities on different hierarchical levels.
+      \begin{columns}<.->
+        \begin{column}{0.5 \textwidth}
+          \centering
+          \input{figures/hierarchy-graph.tex}
+        \end{column}
+        \begin{column}{0.5 \textwidth}
+          \centering
+          \input{figures/hierarchy-space.tex}
+        \end{column}
+      \end{columns}
+    \item<+-> Hierarchies are not explicitly embedded but a consequence of the approach. 
+  \end{itemize}
+\end{frame}
+
+\section{Experiment Results}
+\begin{frame}{Experiment Results}
+  \begin{itemize}[<+->]
+    \item Replication: $0.172\%$ to $-11.7\%$ deviation.
+    \item Domain-specific data: close to $50\%$ of replication performance (at best).
+  \end{itemize}
+\end{frame}
+
+\subsection{Visualising Embeddings}
+\begin{frame}{Experiment Results}{Visualising Embeddings}
+  \begin{columns}[b]
+    \begin{column}{0.5 \textwidth}
+      \begin{figure}
+        \centering
+        \includegraphics[width = 1 \textwidth]{figures/hake-plots.png}
+        \caption{HAKE Paper}
+      \end{figure}
+    \end{column}
+
+    \begin{column}{0.5 \textwidth}
+      \begin{figure}
+        \centering
+        \input{figures/plot.tex}
+        \caption{Domain-Specific}
+      \end{figure}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Improving Link Prediction}
+\subsection{Why (Not) Embeddings?}
+\begin{frame}{Improving Link Prediction}{Why (Not) Embeddings?}
+  \begin{itemize}[<+->]
+    \item Graph embeddings are fast and efficient for inferring.
+    \item Flawed evaluation methods due to reverse and Cartesian product relations.
+    \item Transparency, explainabilty, and interesting graph properties are lost.
+  \end{itemize}
+\end{frame}
+
+\subsection{Then What?}
+\begin{frame}{Improving Link Prediction}{Then What?}
+  \begin{itemize}[<+->]
+    \item Knowledge base representations may be inappropriate (Cartesian product relations).
+      \begin{figure}
+        \centering
+        \input{figures/mediator.tex}
+      \end{figure}
+    \item Similarity measures may give better results, transparency, and explainabilty.
+  \end{itemize}
+\end{frame}
+
+{\aauwavesbg%
+\begin{frame}[plain, noframenumbering]
+  \finalpage{Thank you!}
+\end{frame}}
+
+\end{document}

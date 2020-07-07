@@ -1,0 +1,12 @@
+\begin{tikzpicture}[font = \scriptsize, -stealth, semithick, shorten < = 1pt, shorten > = 1pt, draw = black]
+  \node (medication) {medication};
+  \node (antipyretic) [below left = 0.5cm and 0cm of medication] {antipyretic};
+  \node (aspirin) [below right = 0.5cm and 0cm of antipyretic] {aspirin};
+  \node (a) [below left = 0.5cm and 0cm of antipyretic] {\dots};
+  \node (vaccine) [below right = 0.5cm and 0cm of medication] {vaccine};
+
+  \draw (antipyretic) -- (medication);
+  \draw (aspirin) -- (antipyretic);
+  \draw (vaccine) -- (medication);
+  \draw (a) -- (antipyretic);
+\end{tikzpicture}

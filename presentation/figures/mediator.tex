@@ -1,0 +1,10 @@
+\begin{tikzpicture}[semithick, font = \scriptsize, draw = black, -stealth, shorten < = 1pt, shorten > = 1pt]
+  \node (pain) {pain};
+  \node (treatment) [below = 0.75cm of pain] {treatment};
+  \node (aspirin) [below left = 0.75cm and 0cm of treatment] {aspirin};
+  \node (nausea) [below right = 0.75cm and 0cm of treatment] {nausea};
+
+  \draw (pain) -- node [midway, right] {has treatment} (treatment);
+  \draw (treatment) -- node [midway, left] {treated with} (aspirin);
+  \draw (treatment) -- node [midway, right] {has side-effect} (nausea);
+\end{tikzpicture}

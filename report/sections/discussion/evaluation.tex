@@ -1,0 +1,47 @@
+\subsection{Evaluation Protocol}
+
+Most link prediction methods that stem from the TransE model\cite{Bordes2013}, such as the \ac{hake} technique, are evaluated on the same standard datasets that we introduced in Section~\ref{sec:replication}.
+Immediately, this gives a good foundation for comparing the different techniques.
+However, if those datasets are not realistic, the measures do not say much about how the techniques perform in real-world applications.
+Therefore, it is worth looking at the structure and content of WordNet, Freebase, \ac{yago}, and alike.
+This issue is addressed in\cite{Akrami2020}.
+It turns out that the standard datasets WN18RR, FB15k-237, and YAGO3\--10 suffer from two major problems: data redundancy and Cartesian product relations.
+
+Data redundancy is primarily caused by many pairs of triples being reverse of each other, that is both $(h, r, t)$ and $(t, r^{-1}, h)$ being present in the data.
+Here $r^{-1}$ symbolises the reverse of the relation $r$.
+An example of this can be found in Wikidata where the relations \textsc{medical condition treated}\footnote{\url{https://www.wikidata.org/wiki/Property:P2175}} and \textsc{drug used for treatment}\footnote{\url{https://www.wikidata.org/wiki/Property:P2176}} can give rise to the triple $(\textsc{aspirin}, \textsc{medical condition treated}, \textsc{pain})$ which is a reverse of $(\textsc{pain}, \textsc{drug used for treatment}, \textsc{aspirin})$.
+In~\cite{Akrami2020}, the authors find that, in datasets with many reverse triple pairs, a simple rule-based link prediction method performs on par with, or sometimes even better than, graph embedding-based techniques.
+Such rules for predicting reverse triples can be derived from statistical measures of the dataset\cite{Dettmers2017}.
+Given two relations $r$ and $r'$, we compute the proportion of triples $(h, r, t)$ where $h$ and $t$ are reversely related by $r'$, that is $(t, r', h)$.
+This measure can be described as
+\[\frac{|\{(h, r, t) \mid (h, r, t) \in \mathcal{K} \wedge (t, r', h) \in \mathcal{K}\}|}{|\{(h, r, t) \mid (h, r, t) \in \mathcal{K}\}|}.\]
+If this proportion exceeds a given threshold, say $0.8$, we conclude the rule
+\[(h, r, t) \implies (t, r', h).\]
+Repeating this for each pair of relations $(r, r') \in \mathcal{R} \times \mathcal{R}$ will produce a rule-based classifier that yields an H@1 value around $0.7$ on certain datasets\cite{Akrami2020}.
+
+Cartesian product relations occur when all elements in a set of head entities $H$ are connected to all elements in a set of tail entities $T$ with a given relation $r$, that is $\{(h, r, t) \mid (h, r, t) \in \mathcal{K} \wedge (h, t) \in H \times T\}$.
+The primary issue with Cartesian product relations is that they typically give rise to unrealistic link prediction tasks.
+According to\cite{Akrami2020}, these types of relations often occur when mediator nodes are used to simplify complicated relations between entities.
+For instance, if we wanted to extend the \ac{kg} in \figurename~\ref{fig:one-fact-kb-graph} such that the treatment of pain with aspirin is related to the side-effect nausea, we use a mediator node \textsc{treatment}.
+An illustration of this can be seed in \figurename~\ref{fig:mediator}.
+
+\begin{figure}[ht]
+  \small\centering
+  \input{sections/discussion/figures/mediator.tex}
+  \caption{The \textsc{treatment} node acts as mediator to represent a multi-ary relationship between \textsc{pain} and a treatment.}\label{fig:mediator}
+\end{figure}
+
+The problem with this is that a part of the link prediction task is to predict
+\begin{enumerate*}
+  \item whether a specific medical condition has a treatment and
+  \item whether a specific drug is used for a treatment.
+\end{enumerate*}
+These tasks are clearly trivial.
+Instead, a more interesting and realistic task is to predict
+\begin{enumerate*}
+  \item what drug is used for treating a specific medical condition and
+  \item what medical conditions can be treated using a specific drug.
+\end{enumerate*}
+
+We believe that the absence of reverse and Cartesian product relations is the main explanation of the results from the domain-specific experiments in Section~\ref{sec:domain-specific}.
+The dataset used in the experiment does not contain relations that form reverse or Cartesian product triples.

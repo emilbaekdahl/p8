@@ -1,0 +1,14 @@
+\begin{tikzpicture}
+  \node [circle, fill, inner sep = 1pt, label = below:$O$] at (0, 0) {};
+  \draw [draw, lightgray, very thin] (1, 0) arc (0:110:1);
+  \draw [draw, lightgray, very thin] (2, 0) arc (0:110:2);
+  \draw [draw, lightgray, very thin] (3, 0) arc (0:110:3);
+  \draw [arrow, thin] (-0.5, 0) -- (3.5, 0);
+
+  \node (h) [circle, fill, inner sep = 1pt, label = left:$\bm{h}$] at (0.3r:1cm) {};
+  \node (t) [circle, fill, inner sep = 1pt, label = above:$\bm{t}$] at (0.8r:3cm) {};
+  \node (hm) [circle, fill, inner sep = 1pt] at (0.3r:3cm) {};
+
+  \draw [arrow] (h) -- node [midway, auto, inner sep = 1pt, fill = white] {$\bm{h}_\rho \circ \bm{r}_\rho$} (hm);
+  \draw [arrow] ([shift=(0.3r:3cm)]0, 0) arc (0.3r:0.8r:3cm) node [midway, right] {$\bm{h}_\phi + \bm{r}_\phi \bmod 2\pi$};
+\end{tikzpicture}

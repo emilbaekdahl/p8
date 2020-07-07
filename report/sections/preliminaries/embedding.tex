@@ -1,0 +1,64 @@
+\subsection{Graph Embedding}\label{sec:embedding}
+
+To make graphs more efficient to work with computationally, it can be beneficial to embed them into a vector space\cite{Cai2018}.
+This technique is called graph embedding.
+The goal of graph embedding is to keep the dimensionality of the target vector space, called the embedding space, low while preserving properties of the graph.
+Depending on the properties of interest, the embedding can happen on different levels.
+For instance, in weighted graphs, each edge $e$ between two nodes $u$ and $v$ is associated with a weight $w(e)$ that can be used to represent, for instance, the importance or capacity of $e$.
+This weight can be represented in the embedding by letting the distance between $u$ and $v$ in the embedding space approximate $w(e)$.
+In the context of \acp{kg}, however, the properties of interest lie in both the nodes and the edges.
+
+Generally, embedding a graph can be seen as a problem of learning a function $g$ that maps nodes and edges to vectors in an $\mathbb{R}^d$ embedding space.
+When embedding \acp{kg}, this is typically done by defining a score function $f(h, r, t)$ that describes how likely it is for the triple $(h, r, t)$ to exist\cite{Sun2019}.
+This function should be constructed in a way that gives high scores to true triples $(h, r, t) \in \mathcal{K}$ and low scores to false triples $(h', r', t') \not\in \mathcal{K}$.
+If the score function has this property, learning the embedding can be seen as an optimisation problem with respect to $f$.
+Specifically, we wish to maximise the value of $f$ for every $(h, r, t) \in \mathcal{K}$.
+We use bold letters to denote embeddings of nodes and edges, for instance $\bm{e} = g(e)$ where $\bm{e}$ is the embedded version of the entity $e$.
+
+Some \ac{kg} embedding techniques are referred to as translational models where, given a triple $(h, r, t)$, the relation $\bm{r}$ acts as a translation from $\bm{h}$ to $\bm{t}$ in the embedding space.
+One of the simplest translational models is TransE\cite{Bordes2013}.
+The aim of this technique is to satisfy $\bm{h} + \bm{r} = \bm{t}$ for each triple $(h, r, t) \in \mathcal{K}$.
+The intuition behind this translation technique is shown in \figurename~\ref{fig:transe} where the triple $(h, r, t)$ is embedded as $\bm{h} = (0.5, 0.5)$, $\bm{t} = (2.5, 1.5)$, and $\bm{r} = (2, 1)$.
+This clearly satisfies the objective since $(0.5, 0.5) + (2, 1) = (2.5, 1.5)$.
+
+\begin{figure}[ht]
+  \centering\small
+  \input{sections/preliminaries/figures/transe.tex}
+  \caption{%
+    The TransE model\cite{Bordes2013} aims to satisfy $\bm{h} + \bm{r} = \bm{t}$ for every triple $(h, r, t)$.
+    In this case $\bm{h} = (0.5, 0.5)$, $\bm{t} = (2.5, 1.5)$, and $\bm{r} = (2, 1)$.%
+  }\label{fig:transe}
+\end{figure}
+
+It should be noted that the embedding in \figurename~\ref{fig:transe} inhibits the $\mathbb{R}^2$ space since it makes for an intuitive illustration.
+However, a graph embedding usually occupies a space of higher dimensions since it allows for more details to be captured.
+
+It is clear that if a TransE embedding satisfies $\bm{h} + \bm{r} = \bm{t}$, we can use $\bm{h} + \bm{r} - \bm{t}$ as a measure of correctness; the closer the value of $f$ is to $0$, the more correct the embedding is.
+This leads to the TransE score function which is defined as $f(h, r, t) = - \Vert \bm{h} + \bm{r} - \bm{t} \Vert_p^2$.
+Here, $\Vert\cdot\Vert_p$ denotes the $p$-norm which has the general form
+\[\Vert \bm{e} \Vert_p = \sqrt[p]{\bm{e}_1^p + \bm{e}_2^p + \cdots + \bm{e}_i^p}.\]
+If the TransE embedding is perfect, true triples will have a score of $0$ while false triples will have negative scores.
+
+TransE is a simple model but it lacks the ability to model complicated relations often found in \acp{kg}.
+Examples of these are
+\begin{enumerate*}
+  \item symmetric relations where both $(h, r, t)$ and $(t, r, h)$ are present,
+  \item inverse relations where $r$ is an inverse of $r'$ if both $(h, r, t)$ and $(t, r', h)$ exist, and
+  \item composed relations where $r$ is a composition of $r'$ and $r''$ if $(h, r, t)$, $(h, r', t')$, and $(t', r'', t)$ are present.
+\end{enumerate*}
+This is an issue addressed by the RotatE approach\cite{Sun2019}.
+This technique embeds triples into a complex embedding space where relations represent rotational translations between entities.
+More specifically, given a triple $(h, r, t)$, RotatE aims to satisfy $\bm{h} \circ \bm{r} = \bm{t}$.
+Here, $\circ$ denotes the element-wise product of two vectors, meaning that if $\bm{t} = \bm{h} \circ \bm{r}$ then ${\bm{t}}_i = {\bm{h}}_i \bm{r}_i$.
+The advantage of RotatE is that it is capable of modelling the different types of relations described above.
+
+In addition to complicated relations, \acp{kg} often also exhibit semantic hierarchies.
+For instance, in the medical domain, drugs are grouped in different categories such as antipyretics and vaccines.
+The \ac{hake} technique\cite{Zhang2019}, which build upon RotatE, is developed specifically to handle such structures.
+The purpose of the technique is to persist semantic hierarchies in the graph embedding.
+This is done by dividing the embedding of entities into two parts: one that represents their hierarchical levels and one that distinguishes them on the same level.
+Then the relation embeddings act as translations between the entities.
+
+A \ac{kg} embedding can be used for link prediction by passing candidate triples through the score function.
+The triples that get assigned the highest scores are most likely to exist.
+The \ac{hake} technique currently produces state-of-the-art results for this link prediction task, which is why we take a closer look at it in the next section.

@@ -1,0 +1,41 @@
+\subsection{Setup and Evaluation Metrics}\label{sec:setup}
+
+The testing procedure used for the \ac{hake} technique originate from TransE\cite{Bordes2013} and has been used to evaluate a variety of related link prediction methods.
+The core of the test dataset is a set of true triples $\mathcal{S}$ that do not overlap with the training data $\mathcal{K}$.
+For each true triple $(h, r, t) \in \mathcal{S}$, we generate a set of false triples by replacing either $h$ or $t$ by entities sampled from the \ac{kg}.
+The union of the true and false triples make up the final test dataset $\mathcal{S'}$.
+It should be noted that following this generating process may produce triples that appear in the training or validation datasets.
+Therefore, to avoid skewed results, we remove such triples from the test dataset.
+Generally, given a set of true test triples $\mathcal{S}$ over entities $\mathcal{E}$ and a set training triples $\mathcal{K}$, we can formulate the test dataset as
+
+\begin{equation*}
+  \begin{split}
+    \mathcal{S'} = {} & \mathcal{S} \cup \{(h, r, t') \mid (h, r, t) \in \mathcal{S} \wedge t' \in \mathcal{E} \wedge (h, r, t') \not\in \mathcal{K}\} \\
+    & \cup \{(h', r, t) \mid (h, r, t) \in \mathcal{S} \wedge h' \in \mathcal{E} \wedge (h', r, t) \not\in \mathcal{K}\}.
+  \end{split}
+\end{equation*}
+
+The triples in $\mathcal{S'}$ are now ranked by their score (\ref{eq:score-function}) such that the triple with the highest score is assigned rank $1$ and the triple with the lowest score is assigned rank $|\mathcal{S'}|$.
+
+For evaluation, we use the measures \ac{mrr} and \ac{han} since they are widely adopted for link prediction techniques.
+The \ac{mrr} is calculated as
+\begin{equation}\label{eq:mrr}
+  \text{\ac{mrr}} = \frac{1}{|\mathcal{S}|} \sum_{(h, r, t) \in \mathcal{S}} \frac{1}{\text{rank}(h, r, t)}.
+\end{equation}
+
+Here, $\mathcal{S}$ is the set of true triples and the rank function returns the rank of a triple in entire test dataset $\mathcal{S'}$.
+Clearly, as more true triples are assigned low ranks, meaning that their reciprocal ranks are high, the \ac{mrr} increases.
+Also worth noticing is that as we move down the ranked list of triples, the exact rank of a true triple has less impact on the overall \ac{mrr}.
+That is, a change in rank from $200$ to $199$ has minimal impact compared to a change from $2$ to $1$.
+
+The \ac{han} measure is also based on the ranked set of triples.
+Given an $n$, the \ac{han} value is the proportion of correct predictions in the first $n$ elements of the ranked list as seen below.
+\begin{equation}\label{eq:han}
+  \text{\ac{han}} = \frac{|\text{correct predictions}|}{n}
+\end{equation}
+
+Similarly \ac{mrr}, a higher \ac{han} value is better.
+If all of the top $n$ ranked triples are true, the \ac{han} will be $1$.
+
+For the sake of replication, we run both experiments using the Python implementation of the \ac{hake} technique from\cite{Zhang2019}.\footnote{The code for the original \ac{hake} paper is available on Github: \url{https://github.com/MIRALab-USTC/KGE-HAKE}.}
+This implementation is based on the neural network library PyTorch.

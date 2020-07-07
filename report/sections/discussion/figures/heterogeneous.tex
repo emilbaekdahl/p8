@@ -1,0 +1,23 @@
+\begin{tikzpicture}[node distance = 0.75cm]
+  \node (d1) {$d_1$};
+  \node [below left = 0.75cm and 0.125cm of d1] (d1s1) {$s_1$};
+  \node [below = of d1] (d1s2) {$s_2$};
+  \node [above = of d1] (d1c1) {$c_1$};
+  \draw [-] (d1) -- (d1s1);
+  \draw [-] (d1) -- (d1s2);
+  \draw [-] (d1) -- (d1c1);
+
+  \node [right = 0.25cm of d1] (d2) {$d_2$};
+  \node [above = of d2] (d2c2) {$c_2$};
+  \node [below = of d2] (d2s1) {$s_1$};
+  \draw [-] (d2) -- (d2c2);
+  \draw [-] (d2) -- (d2s1);
+
+  \node [right = 0.25cm of d2] (d3) {$d_3$};
+  \node [above = of d3] (d3c1) {$c_1$};
+  \node [above right = 0.75cm and 0.125cm of d3] (d3c3) {$c_3$};
+  \node [below = of d3] (d3s3) {$s_3$};
+  \draw [-] (d3) -- (d3c1);
+  \draw [-] (d3) -- (d3c3);
+  \draw [-] (d3) -- (d3s3);
+\end{tikzpicture}

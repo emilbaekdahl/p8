@@ -1,0 +1,42 @@
+\section{Related Work}\label{sec:related-work}
+
+In this section, we touch upon two categories of related work: \ac{kb} sources and link prediction techniques.
+
+A number of freely available and open source \acp{kb}, created in different ways, are described in\cite{Paulheim2016}.
+The two most notable that cover general knowledge are Wikidata and DBpedia.
+Both represent the knowledge found in the online encyclopaedia Wikipedia, but they do it in two distinct ways.
+Wikidata is the underlying provider of knowledge to Wikipedia with data curated by the community\cite{Vrandecic2014}.
+On the other hand, DBpedia extracts knowledge directly from the web pages of Wikipedia based on their text content\cite{Lehmann2015}.
+
+\Ac{yago}\cite{Suchanek2007} is a \ac{kb} similar to DBpedia in the sense that most of its knowledge is extracted from Wikipedia.
+However, the semantic lexicon WordNet is used to resolve ambiguity problems and gives \ac{yago} better correctness.
+Since \ac{yago} is based on data from multiple sources, it naturally contains more knowledge compared to DBpedia.
+Moreover, Wikidata, DBpedia, and \ac{yago} rely on data that are already structured.
+Other approaches to constructing \acp{kb} are more automatic and based on unstructured data, for instance NELL\cite{Carlson2010} and Knowledge Vault\cite{Dong2014}.
+
+All of the mentioned \acp{kb} can be accessed in a document format, typically RDF.\@
+Furthermore, Wikidata, DBpedia, and \ac{yago} provide a SPARQL service for remote querying.
+In this project, we will use Wikidata to construct a domain-specific dataset for experiments since it contains the most up-to-date data and provides a stable SPARQL interface.
+
+Approaches to the link prediction problem come in a variety of flavours.
+Some of the simplest techniques are based on similarity between nodes in a graph representation of a \ac{kb}\cite{Lue2011}.
+Here, the heuristic is that similar nodes are more likely to be linked.
+The major challenge with these approaches is that similarity can be measured in many different ways.
+In\cite{Lue2011} alone, more than 20 measures are described and the authors add that the performance of the different measures may vary from case to case.
+As such, deciding on a good similarity measure is not a trivial task.
+Other techniques approach link prediction as a matrix factorisation problem.
+As an example, the RESCAL\cite{Nickel2011} method factorises a three-dimensional matrix representation of a \ac{kb} and produces a model that captures features of the data which can be used to predict missing links.
+
+Many recent link prediction techniques are based on vector representations of \acp{kb}.
+This representation is called a graph embedding and in the context of link prediction, it can be used in a number of ways.
+Currently, one of the most popular ways to use graph embeddings for link prediction is in translational models.
+In a translational model, knowledge about entities is represented as translations in the graph embedding.
+One of the first link prediction methods based on this approach is TransE\cite{Bordes2013}.
+TransE have since been extended by the RotatE method\cite{Sun2019} which is based on embeddings in a complex vector space.
+Using this approach, RotatE has the ability to model complicated \ac{kb} relations which is not possible with TransE.
+Recently, the RotatE method inspired the \ac{hake} technique\cite{Zhang2019} which is based on embeddings in a polar coordinate system.
+The purpose of the method is to exploit the nature of polar coordinates to persist the hierarchical nature of knowledge.
+The \ac{hake} technique currently produces state-of-the-art results in the link prediction task.
+
+In this paper, we will take a closer look at the \ac{hake} technique by examining its underlying theory and replicating the experiments from the original paper.
+We also test the technique further by applying it to a domain-specific \ac{kb} extracted from Wikidata.

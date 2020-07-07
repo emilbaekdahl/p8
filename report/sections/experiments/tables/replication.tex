@@ -1,0 +1,13 @@
+\sisetup{table-format = 2.3}
+\begin{tabular}{@{}lSSSSSSSSSSSS@{}}
+  \toprule
+                            & \multicolumn{4}{c}{WordNet} & \multicolumn{4}{c}{Freebase} & \multicolumn{4}{c}{\ac{yago}}                                                                                      \\
+  \cmidrule(lr){2-5} \cmidrule(lr){6-9} \cmidrule(l){10-13}
+                            & {\ac{mrr}}                  & {H@1}                        & {H@3}                         & {H@10} & {\ac{mrr}} & {H@1} & {H@3} & {H@10} & {\ac{mrr}} & {H@1} & {H@3} & {H@10} \\
+  \midrule
+  Original\cite{Zhang2019}  & 0.497                       & 0.452                        & 0.516                         & 0.582  & 0.346      & 0.250 & 0.381 & 0.542  & 0.545      & 0.462 & 0.596 & 0.694  \\
+  Replication               & 0.490                       & 0.444                        & 0.508                         & 0.583  & 0.326      & 0.224 & 0.369 & 0.528  & 0.491      & 0.408 & 0.541 & 0.637  \\
+  \cmidrule(lr){2-5} \cmidrule(lr){6-9} \cmidrule(l){10-13}
+  Deviation [\si{\percent}] & -1.41                       & -1.77                        & -1.55                         & 0.172  & -5.78      & -10.4 & -3.15 & -2.58  & -9.91      & -11.7 & -9.23 & -8.21  \\
+  \bottomrule
+\end{tabular}

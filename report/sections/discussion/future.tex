@@ -1,0 +1,49 @@
+\subsection{Future Work}
+
+In its nature, a \ac{kg} is of course a graph and thus exhibits many interesting properties that can be taken into consideration for link prediction.
+However, graph embedding-based approaches for link prediction such as TransE, RotatE, and \ac{hake} only consider the triples in isolation when learning the embedding, and thus only learn the structure of the graph.
+Immediately, it seems that properties and semantics of relations and entities in the \ac{kg} are lost in this process.
+To address the link prediction problem effectively, future work should take into consideration not only the structure of the graph, but also the semantics of entities and their relations.
+We think that one of the first steps to consider such semantics is to cluster entities into groups that share similar properties.
+In\cite{Chen2019} an efficient approach for graph clustering is introduced.
+Here, similarity between nodes is measured both by their structure and their attributes.
+This clustering step is applied to star-schema heterogeneous graphs which are defined in the following way.
+
+\begin{definition}[Star-schema heterogeneous graph]
+  A heterogeneous graph is a 4-tuple $(V, E, \phi, \psi)$ where $V$ is a set of nodes, $E \subseteq V \times V$ is a set of edges, $\phi \colon V \rightarrow \mathcal{T}_V$ maps each $v \in V$ to a node type ${\mathcal{T}_V}_i \in \mathcal{T}_V$, and $\psi \colon E \rightarrow \mathcal{T}_E$ maps each $e \in E$ to an edge type ${\mathcal{T}_E}_i \in \mathcal{T}_E$.
+\end{definition}
+
+A heterogeneous graph is said to be on star-schema form if
+\begin{enumerate*}
+  \item node attributes are represented as nodes themselves, called attribute nodes, and
+  \item nodes that share attributes are connected to the same attribute nodes.
+\end{enumerate*}
+Furthermore, non-attribute nodes are referred to as hub nodes, i.e.\ we have $\mathcal{T}_V = \{\text{hub}, \text{attribute}\}$.
+In context of the medical domain, for instance, diseases and drugs can be hub nodes while symptoms, effects, and causes are attribute nodes.
+\figurename~\ref{fig:heterogeneous-star-schema} illustrates the difference between a \enquote{regular} heterogeneous graph and a star-schema heterogeneous graph.
+The $d_i$ hub nodes represent diseases and are connected to the $c_i$ and $s_i$ attributes nodes representing causes and symptoms.
+
+\begin{figure}[ht]
+  \centering\small
+  \subfloat[Heterogeneous]{\centering\input{sections/discussion/figures/heterogeneous.tex}}\qquad
+  \subfloat[Star-schema]{\centering\input{sections/discussion/figures/star-schema.tex}}
+  \caption{The normalisation of the attributes in the left heterogeneous graph produces the star-schema graph on the right.}%
+  \label{fig:heterogeneous-star-schema}
+\end{figure}
+
+It is clear that we can represent a \ac{kg} as a star-schema heterogeneous graph since it is a special case of a graph.
+Since the star-schema structure is capable of capturing similarity both in terms of the properties of entities and how they are related, we think that it may help improving link prediction techniques.
+Furthermore, most current \ac{kg} link prediction techniques expect the graph to be homogeneous\cite{Cai2018}.
+As such, using star-schema heterogeneous graphs for future research can also uncover advantages and disadvantages of using heterogeneous graphs in this problem setting.
+
+Another issue that can be addressed by avoiding graph embeddings for link prediction is flexibility and scalability.
+A graph embedding is fixed to the \ac{kg} it has been learned on.
+If we add new knowledge to a \ac{kg}, either entities or relations, the embedding must be re-computed.
+This can become expensive and likely infeasible when the frequency of changes or the size of the \ac{kg} increases.
+In connection with this, the embedding-based techniques also lack transparency when used for link prediction.
+If the model predicts a given link, it is not immediately obvious why that link might exist.
+Explainability is a not an issue that most \ac{kg} link prediction techniques currently try to address but it may be worth considering in future research since it is an increasingly important topic\cite{Gilpin2018}.
+Similarity measures on graphs are more clear for humans since the specific attributes or nodes that explain the similarity can be pointed out and inspected.
+
+Therefore, we propose that future work in the field of link prediction, and \ac{kg} refinement in general, should take similarity into account.
+This can be done with star-schema heterogeneous graphs as a foundation since they offer a unified similarity measure that exhibits promising results.

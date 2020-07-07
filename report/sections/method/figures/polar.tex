@@ -1,0 +1,9 @@
+\begin{tikzpicture}
+  \node (o) [circle, fill, inner sep = 1pt, label = below:$O$] at (0, 0) {};
+  \draw [draw, lightgray, very thin] (1, 0) arc (0:110:1);
+  \draw [draw, lightgray, very thin] (2, 0) arc (0:110:2);
+  \draw [arrow, thin] (-0.5, 0) -- (2.5, 0);
+  \node (e) [circle, fill, inner sep = 1pt, label = $\bm{e}$] at (0.8r:2cm) {};
+  \draw [arrow] (o) -- node [midway, auto, fill = white, inner sep = 1pt] {$\bm{e}_\rho$} (e);
+  \draw [arrow] (1.5, 0) arc (0:0.8r:1.5) node [midway, right] {$\bm{e}_\phi$};
+\end{tikzpicture}

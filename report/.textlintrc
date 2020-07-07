@@ -1,0 +1,7 @@
+{
+  "filters": {},
+  "rules": {
+    "@textlint-rule/proselint": true
+  },
+  "plugins": ["latex2e"]
+}
